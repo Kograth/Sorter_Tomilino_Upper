@@ -30,7 +30,7 @@ public class ProxySorterBuilder extends RouteBuilder {
         // Секция команды 11
         //INFO SERVER NAME te1; 185.65.22.28; 10.0.0.137
 
-        from("netty4:tcp://{{portNumber}}:4991?decoders=#length-DecoderSorterTlg&encoders=#length-EncoderSorterTlg&sync=true&requestTimeout=10000&keepAlive=true")
+        from("netty4:tcp://{{portNumber}}:4996?decoders=#length-DecoderSorterTlg&encoders=#length-EncoderSorterTlg&sync=true&requestTimeout=10000&keepAlive=true")
                 .process( new ProcessorUpdateHeader())
                 .choice()
                 .when(header(ConstantsSorter.SOURCE_SORTER).isEqualTo("1"))
@@ -49,7 +49,7 @@ public class ProxySorterBuilder extends RouteBuilder {
         //********************************************************
         // Секция команды 13
 
-        from("netty4:tcp://{{portNumber}}:4992?decoders=#length-DecoderSorterTlg&encoders=#length-EncoderSorterTlg&sync=true&keepAlive=true")
+        from("netty4:tcp://{{portNumber}}:4997?decoders=#length-DecoderSorterTlg&encoders=#length-EncoderSorterTlg&sync=true&keepAlive=true")
                 .to("direct:Request13");
 
         // Секция открытия\закрытия\снятия выхода\мешка (Принцип ActiveMQ)
@@ -69,7 +69,7 @@ public class ProxySorterBuilder extends RouteBuilder {
         //***********************************************************
 
         //********Проверка связи*************************************
-        from("netty4:tcp://{{portNumber}}:4994?decoders=#length-DecoderSorterTlg&encoders=#length-EncoderSorterTlg&sync=true&keepAlive=true")
+        from("netty4:tcp://{{portNumber}}:4998?decoders=#length-DecoderSorterTlg&encoders=#length-EncoderSorterTlg&sync=true&keepAlive=true")
                 .to("direct:Request21");
         //***********************************************************
 
@@ -79,10 +79,20 @@ public class ProxySorterBuilder extends RouteBuilder {
                 .to(ExchangePattern.InOnly,"direct:SaveToRepoSorter")
                 .choice()
                 .when(header(ConstantsSorter.PROPERTY_RSCEIVEDCSP).isEqualTo("0")).to(ExchangePattern.InOnly,"activemq:queue:Meashure").end()
-                //Сохраним ошибка в 1с если выход равен 1
-                //.choice()
-                //.when(header(ConstantsSorter.ERROR_STATE).isEqualTo("1")).to(ExchangePattern.InOnly,"activemq:queue:Errors").end()
-                .process(new Req11toResp12())
+                //Сохранение ошибки в регистр ошибок 1С
+
+                .choice()
+                .when(header(ConstantsSorter.ERROR_STATE).isEqualTo("1"))
+                .enrich("direct:Answer12",new Res12Agregate())
+                //.to(ExchangePattern.InOnly,"direct:Answer12")
+                .to(ExchangePattern.InOnly,"direct:Errors")
+                    //.enrich("direct:Answer12", new Res12Agregate())
+                   // .process(new Req11toResp12())
+                .otherwise()
+                    .process(new Req11toResp12())
+                .end();
+
+    from("direct:Answer12").process(new Req11toResp12())
                 ;
 //Получили исходные данные, надо отправить запрос в 1с, предварительно сконвертировав PLU в Штрихкод
         from("direct:Request13")
@@ -120,7 +130,8 @@ public class ProxySorterBuilder extends RouteBuilder {
                     .enrich ("ehcache://SorterPluBarcodeCache?keyType=java.lang.Integer" , new Req13Agregate());
 
         //Посылки которые получили выход в дамшут необходимо доболнительно сохранить в 1С
-        from("activemq:queue:Errors")
+        //отказываемся от очередей в пользу прямого обращения
+        from("direct:Errors")
                     .process(new ProcessorTreatmentErrors())
                     .to("log:ThreatmentErrorsAnswer?showAll=true&multiline=true")
                     .to("cxf:bean:reportIncident");

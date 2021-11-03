@@ -35,6 +35,22 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link InputParameters }
+     * 
+     */
+    public InputParameters createInputParameters() {
+        return new InputParameters();
+    }
+
+    /**
+     * Create an instance of {@link OutputParameters }
+     * 
+     */
+    public OutputParameters createOutputParameters() {
+        return new OutputParameters();
+    }
+
+    /**
      * Create an instance of {@link Measurement }
      * 
      */
@@ -88,22 +104,6 @@ public class ObjectFactory {
      */
     public PingResponse createPingResponse() {
         return new PingResponse();
-    }
-
-    /**
-     * Create an instance of {@link InputParameters }
-     * 
-     */
-    public InputParameters createInputParameters() {
-        return new InputParameters();
-    }
-
-    /**
-     * Create an instance of {@link OutputParameters }
-     * 
-     */
-    public OutputParameters createOutputParameters() {
-        return new OutputParameters();
     }
 
     /**

@@ -9,7 +9,7 @@ public class UpdateOpenGateProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
 
-        Message Out = exchange.getOut();
+        Message Out = exchange.getMessage();
         Out.setBody(new Response18().getClass());
 
     }

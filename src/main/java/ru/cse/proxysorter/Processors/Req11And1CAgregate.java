@@ -26,13 +26,12 @@ public class Req11And1CAgregate  implements AggregationStrategy{
         GetDataPushExitResponse resourceResponse = resource.getIn().getBody(GetDataPushExitResponse.class);
         Request11 mergeResult = originalBody;
 
-        //################### Временный комментарий
-        /*
-        1С вернул код ошибки добавим его в сообщение
-        */
-       /* mergeResult.setErrorCode(resourceResponse.getOutputParameters());
-        mergeResult.setBarcode1С(resourceResponse.getSendBarcode());*/
-        //##########################
+
+
+        //1С вернул код ошибки добавим его в сообщение
+        mergeResult.setErrorCode(resourceResponse.getOutputParameters());
+        mergeResult.setBarcode1С(resourceResponse.getSendBarcode());
+
 
         String bsrcode = (String) resourceResponse.getSendBarcode();
 

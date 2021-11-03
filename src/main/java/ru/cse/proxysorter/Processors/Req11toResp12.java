@@ -10,7 +10,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import ru.cse.proxysorter.Message.Request11;
 import ru.cse.proxysorter.Message.Response12;
-
+import ru.cse.APILk.Service1c.SaveErrorsResponse;
 /**
  *
  * @author Oleynik
@@ -22,7 +22,7 @@ public class Req11toResp12 implements Processor {
         Message In = exchng.getIn();        
         Response12 returnAnswer = new Response12();
         Request11 Req11 = In.getBody(Request11.class);
-
+        SaveErrorsResponse SaveErrorD = In.getBody(SaveErrorsResponse.class);
         short ExitNumber = 1;
 
         if (Req11.getWeight()>0|Req11.getStateWeight()!=0) {
