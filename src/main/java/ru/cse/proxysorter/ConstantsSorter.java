@@ -22,6 +22,7 @@ public class ConstantsSorter {
     public static final String ERROR_CODE="ErrorCode"; //Код ошибки распознования груза
     public static final String ERROR_STATE="ErrorState"; //Наличие ошибки
 
+    public static final String ERROR_BARCODE ="ErrorBarcode";
     
     public static final String EMPTY_BARCODE="0000000000000"; //Пустой штрих код
     

@@ -23,26 +23,24 @@ public class ProcessorTreatmentErrors  implements Processor {
 //        in.setHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_PUT);
 //        in.setHeader(EhcacheConstants.KEY, resourceResponse.getCodePLK()) ;
 
-
-        Request11 Req11 = exchange.getIn().getBody(Request11.class);
+        String barCode1c = (String) exchange.getMessage().getHeader("ErrorBarcode");
+        int errorCode = (int) exchange.getMessage().getHeader("ErrorCode");
+       // Request11 Req11 = exchange.getIn().getBody(Request11.class);
         SaveErrors Reqto1C = new SaveErrors();
-        if (!(Req11==null)) {
+        //if (!(Req11==null)) {
 
-            Reqto1C.setBarcode(Req11.getBarcode1С());
-            Reqto1C.setErrorCode(Req11.getErrorCode());
+        //    Reqto1C.setBarcode(Req11.getBarcode1С());
+        //    Reqto1C.setErrorCode(Req11.getErrorCode());
 
 
-        } else {
-           /* Reqto1C.setHeight(Float.valueOf(1));
-            Reqto1C.setLength(Float.valueOf(1));
-            Reqto1C.setWidth(Float.valueOf(1));
-            Reqto1C.setWeight(Float.valueOf(1));
-            Reqto1C.setNumber("request 11 is null");*/
-        }
+        //} else {
+            Reqto1C.setBarcode(barCode1c);
+            Reqto1C.setErrorCode(errorCode);
+        //}
 
 
 
-        Reqto1C.setInLogin(String.valueOf(2));
+        Reqto1C.setInLogin(String.valueOf(3));
 
         Message Out = exchange.getMessage();// getOut();
         Out.setBody(Reqto1C);

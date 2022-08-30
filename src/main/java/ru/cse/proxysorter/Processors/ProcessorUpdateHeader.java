@@ -15,7 +15,7 @@ public class ProcessorUpdateHeader implements Processor {
 
 
         Request11 Req11 = exchange.getIn().getBody(Request11.class);
-        //Request13 Req13 = exchange.getIn().getBody(Request13.class);
+        Request13 Req13 = exchange.getIn().getBody(Request13.class);
         Request21 Req21 = exchange.getIn().getBody(Request21.class);
 
         if (!(Req21 == null)) {
@@ -30,10 +30,15 @@ public class ProcessorUpdateHeader implements Processor {
 
             Message in = exchange.getIn();
             in.setHeader(ConstantsSorter.SOURCE_SORTER,"0");
-
-
-
         }
+
+        if (!(Req13 == null)) {
+
+
+            Message in = exchange.getIn();
+            in.setHeader(ConstantsSorter.SOURCE_SORTER,"2");
+        }
+
 
     }
 }

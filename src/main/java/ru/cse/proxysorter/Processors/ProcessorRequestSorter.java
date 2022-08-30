@@ -29,7 +29,7 @@ public class ProcessorRequestSorter implements Processor {
         Request11 Req11 = exchange.getIn().getBody(Request11.class);
         Request13 Req13 = exchange.getIn().getBody(Request13.class);
         Request21 Req21 = exchange.getIn().getBody(Request21.class);
-        Request15 Req15 = exchange.getIn().getBody(Request15.class);
+        //Request15 Req15 = exchange.getIn().getBody(Request15.class);
         Request111 Req111 = exchange.getIn().getBody(Request111.class);
         Response18 Req18 = exchange.getIn().getBody(Response18.class);
 
@@ -62,7 +62,10 @@ public class ProcessorRequestSorter implements Processor {
 
             //Добавление структуры в ответ
             ParametersOUT.setInParametrs(ParametersIN);
-            ParametersOUT.setInLogin("2");
+            //томилино верхний 3
+            //томилино нижний 2
+
+            ParametersOUT.setInLogin("3");
 
             //Отправляем ответ в 1с
             Message Out = exchange.getOut();
@@ -90,7 +93,7 @@ public class ProcessorRequestSorter implements Processor {
             ProductDelivery ParametersOUT14 = new ProductDelivery();
             ParametersOUT14.setInParametrs(ExitNumber);
             ParametersOUT14.setProductCode(String.valueOf(ProductCode));
-            ParametersOUT14.setInLogin("2");
+            ParametersOUT14.setInLogin("3");
             Message Out = exchange.getOut();
             Out.setBody(ParametersOUT14);
             Out.setHeader(CxfConstants.OPERATION_NAME, "ProductDelivery");

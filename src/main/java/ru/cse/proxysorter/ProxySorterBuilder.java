@@ -41,7 +41,8 @@ public class ProxySorterBuilder extends RouteBuilder {
                         .to("log:Request11?showAll=true&multiline=true")
                         .to("direct:Request11")
                         .to("log:Request11_ANSWER?showAll=true&multiline=true")
-
+                .when(header(ConstantsSorter.SOURCE_SORTER).isEqualTo("2"))
+                        .to("direct:Request13")
                 .end()
 
                 ;
@@ -49,28 +50,34 @@ public class ProxySorterBuilder extends RouteBuilder {
         //********************************************************
         // Секция команды 13
 
-        from("netty4:tcp://{{portNumber}}:4997?decoders=#length-DecoderSorterTlg&encoders=#length-EncoderSorterTlg&sync=true&keepAlive=true")
-                .to("direct:Request13");
+        //from("netty4:tcp://{{portNumber}}:4997?decoders=#length-DecoderSorterTlg&encoders=#length-EncoderSorterTlg&sync=true&keepAlive=true")
+         //       .to("direct:Request13");
+
 
         // Секция открытия\закрытия\снятия выхода\мешка (Принцип ActiveMQ)
         //***********************************************************//
 
-        from("netty4:tcp://{{portNumber}}:4993?decoders=#length-DecoderSorterTlg&encoders=#length-EncoderSorterTlg&sync=true&keepAlive=true")
+        from("netty4:tcp://{{portNumber}}:4997?decoders=#length-DecoderSorterTlg&encoders=#length-EncoderSorterTlg&sync=true&keepAlive=true")
                 .delay(300)
                 .pollEnrich("activemq:queue:Sorter.enrichMsg",-1, new UpdateOpenGate());
 
         //Сообщения от ТСД
-//        from("netty:tcp://{{portNumber}}:4999?decoders=#length-DecoderSorterTlg&sync=false")
-//                .choice()
-//                .when(simple("${body} is 'ru.cse.proxysorter.Message.Request111'")).to("direct:Request111").otherwise()
-//                .to("activemq:queue:Sorter.enrichMsg");
+        from("netty4:tcp://{{portNumber}}:4999?decoders=#length-DecoderSorterTlg&sync=false")
+                .choice()
+                .when(simple("${body} is 'ru.cse.proxysorter.Message.Request111'")).to("direct:Request111").otherwise()
+                .to("activemq:queue:Sorter.enrichMsg");
 
+        //111 код снятия мешка с ТСД отправляемый в 1C
+        from("direct:Request111")
+                .to("log:111_REQUEST?showAll=true&multiline=true&showBody=true")
+                .process(new Req111To1C()).to("activemq:queue:Sorter.1CReplacingTheBag")
+                .to("log:111_RESPONSE?showAll=true&multiline=true&showBody=true");
 
         //***********************************************************
 
         //********Проверка связи*************************************
-        from("netty4:tcp://{{portNumber}}:4998?decoders=#length-DecoderSorterTlg&encoders=#length-EncoderSorterTlg&sync=true&keepAlive=true")
-                .to("direct:Request21");
+       //from("netty4:tcp://{{portNumber}}:4998?decoders=#length-DecoderSorterTlg&encoders=#length-EncoderSorterTlg&sync=true&keepAlive=true")
+       //         .to("direct:Request21");
         //***********************************************************
 
         //Получили исходные данные, надо отправить запрос в 1с и сохранить соспоставление PLU - Штрихкод
@@ -80,41 +87,33 @@ public class ProxySorterBuilder extends RouteBuilder {
                 .choice()
                 .when(header(ConstantsSorter.PROPERTY_RSCEIVEDCSP).isEqualTo("0")).to(ExchangePattern.InOnly,"activemq:queue:Meashure").end()
                 //Сохранение ошибки в регистр ошибок 1С
-
                 .choice()
                 .when(header(ConstantsSorter.ERROR_STATE).isEqualTo("1"))
-                .enrich("direct:Answer12",new Res12Agregate())
-                //.to(ExchangePattern.InOnly,"direct:Answer12")
-                .to(ExchangePattern.InOnly,"direct:Errors")
-                    //.enrich("direct:Answer12", new Res12Agregate())
-                   // .process(new Req11toResp12())
+                    //.enrich("direct:Answer12",new Res12Agregate())
+                        .process(new Req11toResp12())
+                        .to(ExchangePattern.InOut,"direct:Errors")
                 .otherwise()
                     .process(new Req11toResp12())
                 .end();
 
-    from("direct:Answer12").process(new Req11toResp12())
+    //from("direct:Answer12").process(new Req11toResp12())
                 ;
 //Получили исходные данные, надо отправить запрос в 1с, предварительно сконвертировав PLU в Штрихкод
         from("direct:Request13")
                 .process(new ProcessorRequestSorter())
-                .to("direct:ReadToRepoSorter")
-                .to(ExchangePattern.InOnly,"activemq:queue:FullBagAndCreateDocumentIn1C")//.to("cxf:bean:reportIncident")
-                .process(new ProcessorRequest1C())
+                .choice()
+                .when(header(ConstantsSorter.SOURCE_SORTER).isEqualTo("1"))
+                    .to("direct:Request21")
+                .otherwise()
+                    .to("direct:ReadToRepoSorter")
+                    .to(ExchangePattern.InOnly,"activemq:queue:FullBagAndCreateDocumentIn1C")//.to("cxf:bean:reportIncident")
+                    .process(new ProcessorRequest1C())
+                .end()
                 ;
 //Описание процесса получения 21 телеграммы проверка состоянии шлюза
         from("direct:Request21")
                 //.process(new ProcessorRequestSorter())
                 .process(new ProcessorResponseLink());
-
-
-
-//111 код снятия мешка с ТСД отправляемый в 1C
-        //Отсутсвует понятие мешка в этой модели
-//        from("direct:Request111")
-//           .process(new Req111To1C()).to("activemq:queue:Sorter.FullBagAndCreateDocumentIn1C");
-
-//        from("activemq:queue:Sorter.1CReplacingTheBag").to("cxf:bean:reportIncident");
-            //    to("cxf:bean:reportIncident");
 
 //Все остальные операции, смена мешка и т.д.
         from("direct:RequestANY")

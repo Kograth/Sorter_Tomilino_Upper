@@ -33,13 +33,13 @@
 
     <!--http://lk-test.cse.ru/cargo3_test/ws/SorterExchange - общая тестовая-->
     <!--http://sp1/cse82_reg/ws/SorterExchange       - живая база-->
-<!--    http://sp1/cse82_reg/ws/SorterExchangePlanning?wsdl-->
+<!--   http://lk-test.cse.ru/cargo3_test_it  http://sp1/cse82_reg/ws/SorterExchangePlanning?wsdl-->
     <!--http://web.cse.ru/cse82_reg/ws/SorterExchange - новая живая база -->
     <!-- adress = "http://localhost/Cargo3/ws/SorterExchangePlanning"-->
     <!--WORK ADRESS address = "http://sp1/cse82_reg/ws/SorterExchangePlanning"   "http://sp1/cse82_reg/ws/MeasurerCargoPlanning"-->
     <!--address = "http://sp1/cse82_reg/ws/SorterExchangePlanning"  РАБОЧИЙ -->
     <camelcxf:cxfEndpoint id="reportIncident"
-                          address = "http://adm-12/cse8_alexey/ws/SorterExchangePlanning"
+                          address = "http://sp1/cse82_reg/ws/SorterExchangePlanning"
 
                           serviceClass="ru.cse.APILk.Service1c.SorterExchangePlanningPortType"
 
@@ -49,15 +49,15 @@
                           loggingFeatureEnabled="true">
         <camelcxf:properties>
             <entry key="dataFormat" value="PAYLOAD"/>
-           <entry key="username" value="SorterTomilino"/>
-            <entry key="password" value="Tomilino1"/>
+           <entry key="username" value="SorterTomilinoPost"/>
+            <entry key="password" value="SorterTomilinoPost"/>
         </camelcxf:properties>        
     </camelcxf:cxfEndpoint>
 
     <!--serviceClass="ru.cse.Meashuring.Service1c.MeasurerCargoPortType" -->
 
     <camelcxf:cxfEndpoint id="MeashurementIncident"
-                           address = "http://adm-12/cse8_alexey/ws/MeasurerCargoPlanning"
+                           address = "http://sp1/cse82_reg/ws/MeasurerCargoPlanning"
                            serviceClass="ru.cse.Meashuring.Service1c.MeasurerCargoPlanningPortType"
                            serviceName="ws:MeasurerCargoPlanning"
                            endpointName="ws:MeasurerCargoPlanningSoap12"
@@ -65,8 +65,8 @@
                            loggingFeatureEnabled="true">
         <camelcxf:properties>
             <entry key="dataFormat" value="PAYLOAD"/>
-            <entry key="username" value="SorterTomilino"/>
-            <entry key="password" value="Tomilino1"/>
+            <entry key="username" value="SorterTomilinoPost"/>
+            <entry key="password" value="SorterTomilinoPost"/>
         </camelcxf:properties>          
     </camelcxf:cxfEndpoint>
         
@@ -103,7 +103,7 @@
             <bean class="org.apache.activemq.ActiveMQConnectionFactory">
                <property name="brokerURL" value="vm://amq-broker?broker.persistent=true"/>
                <property name="userName" value="karaf" />
-                <property name="password" value="karaf" />
+                <property name="password" value="SorterRULED" />
                 <property name="trustedPackages">
                     <list>
                         <value>ru.cse.proxysorter.Message</value>

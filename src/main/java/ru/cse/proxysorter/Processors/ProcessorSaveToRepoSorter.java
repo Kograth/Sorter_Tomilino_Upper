@@ -29,7 +29,7 @@ public class ProcessorSaveToRepoSorter  implements Processor {
         //Когда номер выхода 1 значит есть ошибка. Установим признак ошибки для передачи информации об ошибки в 1с
 
         Short ExitNumber = resourceResponse.getExitNumber();
-        if (ExitNumber==1) {
+        if (ExitNumber==201) {
             in.setHeader(ConstantsSorter.ERROR_STATE, "1");
         }
         else {

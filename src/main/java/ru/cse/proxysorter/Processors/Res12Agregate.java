@@ -11,8 +11,9 @@ public class Res12Agregate implements AggregationStrategy {
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
 
-        Request11 originalBody = oldExchange.getIn().getBody(Request11.class);
-
+        //Request11 originalBody = oldExchange.getIn().getBody(Request11.class);
+        //Message OUT = newExchange.getIn();
+        //OUT.setBody(originalBody);
         newExchange = oldExchange;
         return newExchange;
     }

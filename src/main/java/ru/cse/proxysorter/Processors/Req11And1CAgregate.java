@@ -14,6 +14,8 @@ import ru.cse.APILk.Service1c.OutputParameters;
 import ru.cse.proxysorter.ConstantsSorter;
 import ru.cse.proxysorter.Message.Request11;
 
+import java.io.IOException;
+
 /**
  *
  * @author Oleynik
@@ -29,8 +31,14 @@ public class Req11And1CAgregate  implements AggregationStrategy{
 
 
         //1С вернул код ошибки добавим его в сообщение
-        mergeResult.setErrorCode(resourceResponse.getOutputParameters());
-        mergeResult.setBarcode1С(resourceResponse.getSendBarcode());
+        try {
+            mergeResult.setErrorCode(resourceResponse.getOutputParameters());
+            mergeResult.setBarcode1С(resourceResponse.getSendBarcode());
+        } catch (Exception e) {
+            mergeResult.setErrorCode('0');
+            mergeResult.setBarcode1С(resourceResponse.getSendBarcode());
+            //throw new RuntimeException(e);
+        }
 
 
         String bsrcode = (String) resourceResponse.getSendBarcode();

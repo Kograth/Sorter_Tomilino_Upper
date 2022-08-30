@@ -6,9 +6,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ru.cse</groupId>
-    <artifactId>SorterTomilino</artifactId>
+    <artifactId>SorterTomilinoPost</artifactId>
     <packaging>bundle</packaging>
-    <version>2.0.5.0</version>
+    <version>2.0.2.2</version>
     <name>SorterTomilinoExchange</name>
 
 
@@ -164,7 +164,7 @@
                                     <!--<wsdl>${basedir}/src/main/resources/wsdl/MeasurerCargo.wsdl</wsdl> -->
                                     <!--http://sp1/cse82_reg/ws/SorterExchange?wsdl-->
 
-                                    <wsdl>http://adm-12/cse8_alexey/ws/SorterExchangePlanning?wsdl</wsdl>
+                                    <wsdl>http://lk-test.cse.ru/cargo3_test_it/ws/SorterExchangePlanning?wsdl</wsdl>
 <!--                                    <wsdl>http://sp1/cse82_reg/ws/SorterExchangePlanning?wsdl</wsdl>-->
                                     <!-- <wsdl>${basedir}/src/main/resources/wsdl/WebServicesNewCSE.wsdl</wsdl>-->
                                     <extraargs>
@@ -190,7 +190,7 @@
                             <wsdlOptions>
                                 <wsdlOption>
                                     <!--<wsdl>${basedir}/src/main/resources/wsdl/MeasurerCargo.wsdl</wsdl> -->
-                                    <wsdl>http://adm-12/cse8_alexey/ws/MeasurerCargoPlanning?wsdl</wsdl>
+                                    <wsdl>http://lk-test.cse.ru/cargo3_test_it/ws/MeasurerCargoPlanning?wsdl</wsdl>
 <!--                                    <wsdl>http://sp1/cse82_reg/ws/MeasurerCargoPlanning?wsdl</wsdl>-->
                                     <!-- <wsdl>${basedir}/src/main/resources/wsdl/WebServicesNewCSE.wsdl</wsdl>-->
                                     <extraargs>

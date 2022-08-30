@@ -8,21 +8,26 @@ import ru.cse.APILk.Service1c.ReplacingTheBag;
 import ru.cse.proxysorter.Message.Request111;
 import ru.cse.proxysorter.Message.Request17;
 
+import java.util.function.ToIntBiFunction;
+
 public class Req111To1C implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
 
         Request111 Req111 = exchange.getIn().getBody(Request111.class);
 
-        String ExitNumber = String.valueOf(Req111.getExitNumber());
+        //String ExitNumber = String.valueOf(Req111.getExitNumber());
         String BagBarCode = String.valueOf(Req111.getBagBarCode());
+        //Делаем ракировку для знакового байта
+        byte byteNumber     = Req111.getExitNumber();
+        int ExitInt         = byteNumber & 0xff;
 
         ReplacingTheBag ParametersOUT18 = new ReplacingTheBag();
 
         ParametersOUT18.setBagCode(BagBarCode);
-        ParametersOUT18.setExitNumber(ExitNumber);
+        ParametersOUT18.setExitNumber(String.valueOf(ExitInt));
         ParametersOUT18.setInParametrs("From 111");
-        ParametersOUT18.setInLogin("1");
+        ParametersOUT18.setInLogin("3");
         Message Out = exchange.getOut();
         Out.setBody(ParametersOUT18);
         Out.setHeader(CxfConstants.OPERATION_NAME, "ReplacingTheBag");
