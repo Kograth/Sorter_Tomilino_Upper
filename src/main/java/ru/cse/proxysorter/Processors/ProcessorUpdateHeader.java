@@ -34,9 +34,16 @@ public class ProcessorUpdateHeader implements Processor {
 
         if (!(Req13 == null)) {
 
+            Short Reset = Req13.getSource();
 
             Message in = exchange.getIn();
-            in.setHeader(ConstantsSorter.SOURCE_SORTER,"2");
+            //Если это правильная телеграмма то здесь будет источник. если это ошибочная телеграмма то будет код ошибки
+            //кода ошибки всего два 0хF0 успешный сброс и 0xF1 ошибка сброса
+
+            if (Reset == 0xF1) {
+                in.setHeader(ConstantsSorter.SOURCE_SORTER,"4");
+            }
+            else in.setHeader(ConstantsSorter.SOURCE_SORTER,"2");
         }
 
 

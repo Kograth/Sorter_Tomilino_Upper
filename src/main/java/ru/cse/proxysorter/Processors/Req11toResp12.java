@@ -32,8 +32,8 @@ public class Req11toResp12 implements Processor {
 
         String barCode1c = Req11.getBarcode1С();
         byte Wellsping   = Req11.getWellspring();
-        byte WellsprigA  = 71;
-        byte WellsprigB  = 72;
+        byte WellsprigA  = 113;
+        byte WellsprigB  = 114;
 
         //SaveErrorsResponse SaveErrorD = In.getBody(SaveErrorsResponse.class);
         short ExitNumber = 202;

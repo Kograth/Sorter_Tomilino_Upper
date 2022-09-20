@@ -34,28 +34,22 @@ public class ProxySorterBuilder extends RouteBuilder {
                 .process( new ProcessorUpdateHeader())
                 .choice()
                 .when(header(ConstantsSorter.SOURCE_SORTER).isEqualTo("1"))
-                        //.to("log:Request21?showAll=true&multiline=true")
                         .to("direct:Request21")
                 .when(header(ConstantsSorter.SOURCE_SORTER).isEqualTo("0"))
-                    //.otherwise()
                         .to("log:Request11?showAll=true&multiline=true")
                         .to("direct:Request11")
                         .to("log:Request11_ANSWER?showAll=true&multiline=true")
                 .when(header(ConstantsSorter.SOURCE_SORTER).isEqualTo("2"))
+                        .to("log:Request13?showAll=true&multiline=true")
                         .to("direct:Request13")
+                        .to("log:Request13_ANSWER?showAll=true&multiline=true")
+                .when(header(ConstantsSorter.SOURCE_SORTER).isEqualTo("4"))
+                        .to("log:Request13_ERROR?showAll=true&multiline=true")
+                        .to(ExchangePattern.InOut,"direct:Errors")
+                        .to("log:Request13_ANSWER_ERROR?showAll=true&multiline=true")
                 .end()
 
                 ;
-
-        //********************************************************
-        // Секция команды 13
-
-        //from("netty4:tcp://{{portNumber}}:4997?decoders=#length-DecoderSorterTlg&encoders=#length-EncoderSorterTlg&sync=true&keepAlive=true")
-         //       .to("direct:Request13");
-
-
-        // Секция открытия\закрытия\снятия выхода\мешка (Принцип ActiveMQ)
-        //***********************************************************//
 
         from("netty4:tcp://{{portNumber}}:4997?decoders=#length-DecoderSorterTlg&encoders=#length-EncoderSorterTlg&sync=true&keepAlive=true")
                 .delay(300)
@@ -73,12 +67,6 @@ public class ProxySorterBuilder extends RouteBuilder {
                 .process(new Req111To1C()).to("activemq:queue:Sorter.1CReplacingTheBag")
                 .to("log:111_RESPONSE?showAll=true&multiline=true&showBody=true");
 
-        //***********************************************************
-
-        //********Проверка связи*************************************
-       //from("netty4:tcp://{{portNumber}}:4998?decoders=#length-DecoderSorterTlg&encoders=#length-EncoderSorterTlg&sync=true&keepAlive=true")
-       //         .to("direct:Request21");
-        //***********************************************************
 
         //Получили исходные данные, надо отправить запрос в 1с и сохранить соспоставление PLU - Штрихкод
         from("direct:Request11")
@@ -105,7 +93,9 @@ public class ProxySorterBuilder extends RouteBuilder {
                 .when(header(ConstantsSorter.SOURCE_SORTER).isEqualTo("1"))
                     .to("direct:Request21")
                 .otherwise()
+                    .to("log:Request13_REQUEST?showAll=true&multiline=true")
                     .to("direct:ReadToRepoSorter")
+                    .to("log:Request13_RESPONSE?showAll=true&multiline=true")
                     .to(ExchangePattern.InOnly,"activemq:queue:FullBagAndCreateDocumentIn1C")//.to("cxf:bean:reportIncident")
                     .process(new ProcessorRequest1C())
                 .end()

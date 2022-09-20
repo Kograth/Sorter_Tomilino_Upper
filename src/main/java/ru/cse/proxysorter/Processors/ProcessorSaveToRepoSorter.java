@@ -37,7 +37,6 @@ public class ProcessorSaveToRepoSorter  implements Processor {
         }
         in.setHeader(ConstantsSorter.PROPERTY_STATUS_SIZE ,StatusSize);
         in.setHeader(ConstantsSorter.PROPERTY_STATUS_WEIGHT ,StatuzWeight);
-        //in.setHeader("ReceivedCSP","1");
         in.setHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_PUT);
         in.setHeader(EhcacheConstants.KEY, resourceResponse.getCodePLK()) ;
     }

@@ -89,19 +89,18 @@ public class ProcessorRequestSorter implements Processor {
             CommandCode = Req13.getCommand();
             
             String ExitNumber = String.valueOf(Req13.getExitNumber());
-
             ProductDelivery ParametersOUT14 = new ProductDelivery();
             ParametersOUT14.setInParametrs(ExitNumber);
             ParametersOUT14.setProductCode(String.valueOf(ProductCode));
             ParametersOUT14.setInLogin("3");
-            Message Out = exchange.getOut();
+            Message Out = exchange.getMessage(); // old function getOut();
             Out.setBody(ParametersOUT14);
             Out.setHeader(CxfConstants.OPERATION_NAME, "ProductDelivery");
             Out.setHeader(CxfConstants.OPERATION_NAMESPACE, "http://www.cse-cargo.ru/client");
             exchange.setProperty("SourceSort", Req13.getSource());
             exchange.setProperty(ConstantsSorter.PROPERTY_COMANDCODE, CommandCode);
             exchange.setProperty(ConstantsSorter.PROPERTY_PLK, ProductCode);
-            
+
         }
         if (!(Req21 == null)) {
 

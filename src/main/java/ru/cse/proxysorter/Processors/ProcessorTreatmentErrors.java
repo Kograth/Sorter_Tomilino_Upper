@@ -9,40 +9,42 @@ import ru.cse.APILk.Service1c.GetDataPushExit;
 import ru.cse.APILk.Service1c.GetDataPushExitResponse;
 import ru.cse.APILk.Service1c.SaveErrors;
 import ru.cse.Meashuring.Service1c.Measurement;
+import ru.cse.proxysorter.ConstantsSorter;
 import ru.cse.proxysorter.Message.Request11;
+import ru.cse.proxysorter.Message.Request13;
+
+import java.lang.reflect.Type;
 
 public class ProcessorTreatmentErrors  implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
-        //Раннее добавили структуру ответа в 11 класс. Получим ее и сохраним в кэше.
-//        Message in = exchange.getIn();
-//        Request11 resourceResponse  =  in.getBody(Request11.class);
-//
-//        exchange.setProperty(String.valueOf(resourceResponse.getCodePLK()),resourceResponse.getErrorCode());
-//
-//        in.setHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_PUT);
-//        in.setHeader(EhcacheConstants.KEY, resourceResponse.getCodePLK()) ;
 
-        String barCode1c = (String) exchange.getMessage().getHeader("ErrorBarcode");
-        int errorCode = (int) exchange.getMessage().getHeader("ErrorCode");
-       // Request11 Req11 = exchange.getIn().getBody(Request11.class);
+        Message In = exchange.getIn();
+        String TypeError = (String) In.getHeader(ConstantsSorter.SOURCE_SORTER);
         SaveErrors Reqto1C = new SaveErrors();
-        //if (!(Req11==null)) {
+        String barCode1c = "";
+        int errorCode = 0;
 
-        //    Reqto1C.setBarcode(Req11.getBarcode1С());
-        //    Reqto1C.setErrorCode(Req11.getErrorCode());
+        if (TypeError == "4") {
 
+            Request13 Req13 = In.getBody(Request13.class);
+            barCode1c = String.valueOf(Req13.getCodeProduct());
+            errorCode = 9;
 
-        //} else {
             Reqto1C.setBarcode(barCode1c);
             Reqto1C.setErrorCode(errorCode);
-        //}
-
+        }
+        else {
+            barCode1c = (String) exchange.getMessage().getHeader("ErrorBarcode");
+            errorCode = (int) exchange.getMessage().getHeader("ErrorCode");
+            Reqto1C.setBarcode(barCode1c);
+            Reqto1C.setErrorCode(errorCode);
+        }
 
 
         Reqto1C.setInLogin(String.valueOf(3));
 
-        Message Out = exchange.getMessage();// getOut();
+        Message Out = exchange.getMessage();
         Out.setBody(Reqto1C);
         Out.setHeader(CxfConstants.OPERATION_NAME, "SaveErrors");
         Out.setHeader(CxfConstants.OPERATION_NAMESPACE, "http://www.cse-cargo.ru/client");
